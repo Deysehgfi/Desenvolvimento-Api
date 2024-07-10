@@ -1,5 +1,6 @@
 // const express = require('express')
-import express from 'express'
+import express, { request, response } from 'express'
+import {v4 as uuidv4} from "uuid"
 
 const PORT = 3333;
 //cria um servidor 
@@ -10,69 +11,59 @@ app.use(express.json())
 
 
 
+//Middleware -> 
+const logRoutes = (request, response, next) => {
+const {url , method } = request
+const rota = `[${method.toUpperCase()}] ${url}`
+console.log(rota)
+next()
+}
 
-/*Rotas
-Request HTTP
-query params - ...:3333/pessoas?nome="Carlos"&idade=32
-*Rotas do tipo GET (utilizado para crir FILTROS e BUSCAS)
+//Middleware Para todas as rotas
+app.use(logRoutes)
 
-
-route params - ...:3333/pessoas/5
-*Rotas tipo GET, PUT, PATCH, DELETE(listar um elemento)
-
-
-body params - ...:3333/pessoas
-*Rotas do tipo POST (Cadastro de informções)
-*/
-
-//rota com method === get 
-//rota , função de callbak com requisição e a resposta
-// app.get("/users", (request, response)=>{
-// // response.status(200).json({msg: "GET"})
-// //cabeçalho 200 retorna como objeto json com uma menssage
-
-// response.status(200).json([
-//     "Pessoas 1",
-//     "Pessoas 2",
-//     "Pessoas 3"
-// ]) 
-// })
-
+const users = [];
 
 //Trabalhando com as rotas query
-app.get("/users", (request, response)=>{
+app.get("/users", logRoutes, (request, response)=>{
 //    const query = request.query 
 //    console.log(query)
 
-const {nome , idade} = request.query
-console.log(nome,idade)
+// const {nome , idade} = request.query //queryparams
+
     
-    response.status(200).json([
-        "Pessoas 1",
-        "Pessoas 2",
-        "Pessoas 3"
-    ]) 
+    response.status(200).json(users)
     })
 
 
 //post
 app.post("/users", (request, response)=>{
-    // response.status(200).json({msg:"POST"})
+ const {nome, idade} = request.body
+   
+ //Validação do nome ser obrigatório
+ if(!nome){
+    response.status(422).json({message: "O nome é obrigatório"})
+    return;
+ }
 
-    // const body = request.body
-    // console.log(body)
+ //validação
+
+ if(!idade){
+    response.status(400).json({message: ""})
+    return;
+ }
+
+ const user = { 
+    id: uuidv4(),
+    nome,
+    idade
+ }
+
+ users.push(user)
+
+response.status(201).json({message:"Usuario cadastrado", user})
 
 
-    const {nome, idade} = request.body
-    console.log(nome, idade)
-
-
-    response.status(201).json([
-        "Pessoas 1",
-        "Pessoas 2",
-        "Pessoas 3",
-        "Pessoas 4"
-    ]) 
 }) 
 
 
@@ -81,25 +72,33 @@ app.post("/users", (request, response)=>{
 //put
 //Routes Params 
 //referencia ao id
-app.put("/users/:id/:cpf", (request, response)=>{
-    // const params = request.params
-    // console.log(params)
+app.put("/users/:id", (request, response)=>{
+ 
+
+    const id = request.params.id //Desestruturando
+
+    const indexUser = users.findIndex((user)=> user.id == id)
+
+    if(indexUser == -1){
+        response.status(404).json({message:"Usuario nao encontrado"})
+        return
+    }
+
+    //validação
+    if(!nome || idade){
+        response.status(400).json({message:"nome e idade é obrigatório "})
+    }
 
 
-    //nos parametros em uma propriedade id 
-    // const id = request.params.id
-    // const cpf = request.params.cpf
-    // console.log(id , cpf)
+    const updateUser = {
+        id,
+        nome,
+        idade
+    }
 
-    const {id, cpf} = request.params //Desestruturando
-    console.log(id,cpf)
-    // response.status(200).json({msg:"PUT"}) -> estrutura base
-    response.status(201).json([
-        "Pessoas 1",
-        "Pessoas 10",
-        "Pessoas 3",
-        "Pessoas 4"
-    ]) 
+    //Atualizar
+    users[indexUser] = updateUser
+    response.status(200).json(updateUser);
 })
 
 
@@ -107,13 +106,19 @@ app.patch("/users", (request, response)=>{
     response.status(200).json({msg:"PATCH"})
 })
 
-app.delete("/users", (request, response)=>{
+app.delete("/users/:id", (request, response)=>{
     // response.status(200).json({msg:"DELETE"})
-    response.status(204).json([
-        "Pessoas 1",
-        "Pessoas 3",
-        "Pessoas 4"
-    ]) 
+const id = request.params.id
+
+const indexUser = users.findIndex((user)=> user.id == id)
+
+if(indexUser === -1){
+    response.status(404).json({message:"Usuario nao encontrado"})
+}
+
+users.splice(indexUser,1)
+response.status(204).send("Usuario deletado")
+
 })
 
 
