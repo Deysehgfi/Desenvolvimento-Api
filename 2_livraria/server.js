@@ -3,6 +3,8 @@ import express, { request, response } from "express"
 import mysql from "mysql2"
 import { v4 as uuidv4} from "uuid"
 
+//Inline SQL Highlight -> extenção do vscode
+
 
 //o numero da porta esta no arquivo env
 //o arquivo env é caso a port esteja com valor ocupado no computador
@@ -38,7 +40,7 @@ connection.connect((err)=>{
 
 app.get("/livros", (request, response)=>{
    // response.send("ola mundo")
-    const sql = 'SELECT * FROM livros'; //intrução para selecionar todos os livro
+    const sql = `SELECT * FROM livros`; //intrução para selecionar todos os livro
 
     //faço um requisição e espera uma resposta que retorna em callback ()=>{}
     connection.query(sql, (err,data)=>{
@@ -59,7 +61,8 @@ app.get("/livros", (request, response)=>{
 
 app.post("/livros", (request, response)=>{
     // response.send("ola mundo")
-    const {titulo, autor, genero, ano_publicacao, preco} = request.body
+    //recebendo as requisiçõe do body
+    const {titulo, autor, genero, ano_publicacao, preco} = request.body;
 
     //validações dos campos obrigatórios
     if(!titulo){
@@ -87,28 +90,55 @@ app.post("/livros", (request, response)=>{
     // validação se os livros forem existente
     //validacao sera
     // const checkSql = ""
-    const checkSql = `SELECT * FROM livros WHERE titulo = "${titulo}" AND autor = "${autor}" AND ano_publicacao = "${ano_publicacao}"`
+    const checkSql = /*sql*/ `SELECT * FROM livros WHERE titulo = "${titulo}" AND autor = "${autor}" AND ano_publicacao = "${ano_publicacao}" `
     
-    connection.query(checkSql,(err,data)=>{
+    connection.query(checkSql,(err, data)=>{
         if(err){
             response.status(500).json({message:"Erro ao buscar os livros"})
             return console.log(err);
         }
     
+        //se os 
         if(data.length > 0 ){
             response.status(409).json({message: "Livro ja existe na livraria"})
             return console.log(err);
         }
+    
+        const id = uuidv4() //atribui um valor ao id
+        const disponibilidade = 1 
+
+        const inserSql = /*sql */ `INSERT INTO livros
+        (id, titulo, autor, ano_publicacao, genero, preco, disponibilidade) VALUES ("${id}","${titulo},"${autor}","${ano_publicacao}","${genero}","${preco}","${disponibilidade}")`
+
+        console.log(genero)
+
+
+        connection.query(inserSql,(err)=>{
+            if(err){
+                response.status(500).json({message:"Erro ao cadastrar livro"})
+            }
+            response.status(201).json({message:"livros foi cadastrado"})
+        })
     })
+ });
+
+
+ app.get('/livros/:id',(request,response)=>{
+
+ })
+ app.put('/livros/:id',()=>{
+
+ })
+ app.delete('/livros/:id',()=>{
+
  })
 
 
 
-
-//Rota 404
-app.use((request,response)=>{
-    response.status(404).json({message:"Rota não encontrada"})
-})
+// //Rota 404
+// app.use((request,response)=>{
+//     response.status(404).json({message:"Rota não encontrada"})
+// })
 
 
 app.listen(PORT, ()=>{
