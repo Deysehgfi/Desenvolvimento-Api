@@ -1,0 +1,8 @@
+rotas funcionarios
+ id ,  nome , cargo , data_contrataco , salario, email, created_at, updated_at
+
+ rota 01 -> listar todos 
+ rota 02 -> cadastrar funcionarios (Único email por funcionario)
+ rota 03 -> listar um (1) funcionario
+ rota 04 -> atualizar um (1) funcionario
+ rota 05 -> deletar um (1) funcionario 
