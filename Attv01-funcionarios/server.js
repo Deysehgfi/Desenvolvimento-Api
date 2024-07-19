@@ -8,6 +8,7 @@ const PORT = 3333;
 //npm i express
 //npm i mysql2
 //npm i uuid
+//npm i dotenv mysql2 express uuid
 
 //criar comunicação com my sql 
  const connection = mysql.createConnection({
