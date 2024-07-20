@@ -1,7 +1,7 @@
 import conn from "../config/conn.js"
 
 const tableLivros = `
-CREATE TABLE IF NOT EXISTS livros(
+    CREATE TABLE IF NOT EXISTS livros(
     id varchar(60) primary key,
     titulo varchar(255) not null,
     autor varchar(255) not null,
@@ -20,7 +20,5 @@ conn.query(tableLivros,(err, result, field)=>{
         return
     }
 
-    console.log(result)
-    console.log(field)
-    console.log()
+    console.log('Tabela [livros] criada com sucesso')
 })
