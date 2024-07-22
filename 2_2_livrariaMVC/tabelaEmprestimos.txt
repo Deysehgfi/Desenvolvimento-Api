@@ -1,0 +1,18 @@
+3 tabelas (livros, funcionario, clientes)
+
+TABELA_ emprestimos
+
+id INT auto incremente
+cliente_id 
+livro_id
+data_empréstimo
+data_devolução 
+created_At
+updated_At
+
+1 listar todos os emprestimos
+2 validar o criar emprestimos
+            - dayjs npm -> datas 
+            - data_empréstimo não ser anterior da data de hoje 
+            - data_devolução não pode ser anterior a data emprestimos
+            - data_devolução não pode ser maior do que 2 semanas 

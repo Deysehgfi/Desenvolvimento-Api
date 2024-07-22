@@ -6,13 +6,13 @@ import conn from "./config/conn.js";
 
 //Importação dos modulos e criação das tabelas
 import "./models/livroModel.js"
-import "./models/funcionarios.js"
 import "./models/clientesModel.js" //
+import "./models/emprestimosModel.js"
 
 //Immportação da ROtas 
 import livrosRoutes from "./routes/livrosRoutes.js"
-import clientesRoutes from "./routes/clientesRoutes.js" //
-
+import clientesRoutes from "./routes/clientesRoutes.js" // import rotas dos clientes
+import emprestimosRoutes from "./routes/emprestimosRoutes.js"
  
 
 
@@ -29,7 +29,7 @@ app.use(express.json())
 //utilização da routes
 app.use("/livros", livrosRoutes);
 app.use("/clientes", clientesRoutes); // 
-
+app.use("/emprestimos", emprestimosRoutes); 
 
 
 app.get("/", (request, response) => {

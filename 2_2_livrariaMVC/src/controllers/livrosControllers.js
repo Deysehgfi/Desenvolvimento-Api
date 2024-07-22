@@ -40,10 +40,12 @@ export const cadastrarLivro = (request, response)=>{
     }
     
     // cadastrar um livro -> antes preciso saber se esse livro existe 
-    const checkSql = /*sql*/  `SELECT * FROM livros WHERE titulo ="${titulo}" AND
-    autor = "${autor}" AND 
-    ano_publicacao = "${ano_publicacao}"`
-    conn.query(checkSql, (err, data)=>{
+    const checkSql = /*sql*/  `SELECT * FROM livros WHERE ?? = ? AND
+    ?? = ? AND 
+   ?? = ?` ;
+
+    const checkSqlData = ["titulo",titulo, "autor",autor, "ano_publicacao", ano_publicacao]
+    conn.query(checkSql, checkSqlData, (err, data)=>{
     if(err){
      response.status(500).json({message:"Erro ao buscar livros"})
      return console.log(err); 
@@ -59,9 +61,14 @@ export const cadastrarLivro = (request, response)=>{
     
     // inserir dados
     const insertSql = /*sql*/ `INSERT INTO livros 
-    (id, titulo, autor, ano_publicacao, genero, preco, disponibilidade)
-    VALUES ("${id}","${titulo}","${autor}","${ano_publicacao}","${genero}","${preco}","${disponibilidade}")` 
-    conn.query(insertSql, (err)=>{
+    (??, ??, ??, ??, ??, ??, ??)
+    VALUES (?,?,?,?,?,?,?)`
+    
+    //Todas as colunas
+    const insertData = ["livro_id", "titulo", "autor", "ano_publicacao", "preco", "genero","disponibilidade", id , titulo, autor, ano_publicacao, preco , genero, disponibilidade]
+
+    // .query -> função responsável por executar os dados 
+    conn.query(insertSql, insertData, (err)=>{
      if(err){
          response.status(500).json({message:"Erro ao cadastrar livro"}); 
      }

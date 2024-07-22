@@ -2,7 +2,7 @@ import conn from "../config/conn.js"
 
 const tableClientes = `
     CREATE TABLE IF NOT EXISTS clientes(
-    id varchar(60) primary key,
+    cliente_id varchar(60) primary key,
     nome varchar(255) not null,
     email varchar(255) not null,
     image varchar(255) not null,
@@ -12,7 +12,7 @@ const tableClientes = `
 );`
 
 
-conn.query(tableClientes,(err, result, field)=>{
+conn.query(tableClientes, (err, result, field)=>{
     if(err){
         console.error("Erro ao criar a tabela")
         return
