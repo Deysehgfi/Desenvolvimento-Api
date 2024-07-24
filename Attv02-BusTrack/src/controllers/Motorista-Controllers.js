@@ -69,3 +69,26 @@ conn.query(checkSql, (err, data)=>{
     }); 
 };
 
+export const buscarMotorista = (request, response) =>{
+    const {id} = request.params
+
+    const sql = `SELECT * FROM motorista WHERE ?? = ?`
+
+    const dataSql = ["id_motorista", id ]
+
+    conn.query(sql, dataSql, (err, data)=>{
+        if(err){
+            console.error(err)
+            response.status(500).json({message: "Erro ao buscar motorista"})
+            return;
+        }
+
+        if(data.length === 0 ){
+            response.status(404).json({message:"motorista não encontrado"})
+        }
+
+        const motorista = data[0]
+        response.status(200).json(motorista)
+    })
+}
+
