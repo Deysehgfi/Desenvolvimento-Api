@@ -92,3 +92,48 @@ export const buscarLinha = (request, response) =>{
     })
 }
 
+export const editarLinha = (request , response) => {
+    const {id} = request.params
+
+    const {nome , numero_linha , intinerario } = request.body
+
+    if(!nome){
+        response.status(400).json({message: 'O nome da linha é obrigatório'})
+        return
+    }
+    if(!numero_linha){
+        response.status(400).json({message: 'O numero da linha é obrigatório'})
+        return
+    }
+    if(!intinerario){
+        response.status(400).json({message: 'O intinerário da linha é obrigatório'})
+        return
+    } 
+
+//checar se existe no sql
+    const checkSql = /*sql */ `SELECT * FROM linhas WHERE id_Linha = "${id}"` 
+    conn.query(checkSql, (err, data)=>{
+        if(err){
+            console.error(err)
+            response.status(500).json({message: "Erro ao buscar Linha"})
+        }
+
+        if(data.length === 0 ){
+           return response.status(404).json({message:"Linha não encontrada"})
+        }
+
+        const updateSql = /*sql */ `UPDATE linhas SET nome = "${nome}" , numero_linha = "${numero_linha}", intinerario = "${intinerario}" WHERE id_Linha = "${id}"`
+
+
+        conn.query(updateSql,(err)=>{
+            if(err){
+                console.error(err)
+                response.status(500).json({message: "Erro ao atualizar linha"})
+                return
+            }
+
+            response.status(200).json({message: "linha atualizado"})
+        })
+    })
+    
+}

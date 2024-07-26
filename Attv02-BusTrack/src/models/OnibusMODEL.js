@@ -1,8 +1,8 @@
 import conn from "../config/conn.js";
 
-const tableOnibus = `
+const newLocal = `
 CREATE TABLE IF NOT EXISTS onibus (
-    id varchar(60) primary key not null,
+    id_onibus varchar(60) primary key not null,
     placa varchar(60) not null,
     modelo varchar(255) not null,
     ano_fabricacao year(4) not null,
@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS onibus (
     foreign key (id_linha) references linhas(id_Linha),
     foreign key (id_motorista) references motorista(id_motorista)
 );
-`
+`;
+const tableOnibus = newLocal
 
 conn.query(tableOnibus, (err)=>{
     if(err){

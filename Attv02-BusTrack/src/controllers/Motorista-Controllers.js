@@ -92,3 +92,27 @@ export const buscarMotorista = (request, response) =>{
     })
 }
 
+export const deletarMotorista = (request, response) => {
+
+        const {id} = request.params;
+    
+        const deleteSql = `DELETE FROM motorista WHERE id_motorista = "${id}"`
+    
+        conn.query(deleteSql, (err, info)=>{
+            if(err){
+                response.status(500).json({message:  "Erro ao deletar o motorista"})
+                return
+            }
+            console.log(info)
+    
+            if(info.affectedRows === 0 ){
+                response.status(404).json({message: "Motorista não encontrado"})
+                return
+            }
+            
+    
+            response.status(200).json({message: "o motorista selecionado foi deletado"})
+        })
+    }
+
+
