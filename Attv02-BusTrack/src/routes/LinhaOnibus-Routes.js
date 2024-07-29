@@ -2,7 +2,7 @@ import { Router } from "express";
 
 const router = Router()
 
-import {getLinhaOnibus, criarLinha, buscarLinha, editarLinha} from "../controllers/LinhaOnibus-Controllers.js"
+import { getLinhaOnibus, criarLinha, buscarLinha, editarLinha } from "../controllers/LinhaOnibus-Controllers.js"
 
 
 router.get("/", getLinhaOnibus);

@@ -1,0 +1,3 @@
+npm i bcrypt
+npm i cookie-parse cors dotenv express jsonwebtoken multer mysql2 uuid
+npm i -D nodemon

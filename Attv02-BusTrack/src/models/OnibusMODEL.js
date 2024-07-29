@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS onibus (
 `;
 const tableOnibus = newLocal
 
-conn.query(tableOnibus, (err)=>{
-    if(err){
+conn.query(tableOnibus, (err) => {
+    if (err) {
         console.error("Erro ao criar a tabela onibus")
         return;
     }

@@ -17,7 +17,7 @@ import OnibusRoutes from "./src/routes/Onibus-Routes.js"
 
 const app = express()
 
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
 
@@ -28,6 +28,6 @@ app.use("/onibus", OnibusRoutes);
 
 
 
-app.listen(PORT, ()=>{
+app.listen(PORT, () => {
     console.log("✨ servidor on PORT:", PORT)
 })

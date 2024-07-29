@@ -10,8 +10,8 @@ const tableLinhaOnibus = `
 `
 
 
-conn.query(tableLinhaOnibus,(err)=>{
-    if(err){
+conn.query(tableLinhaOnibus, (err) => {
+    if (err) {
         console.error("Erro ao criar a tabela LinhasOnibus")
         return
     }

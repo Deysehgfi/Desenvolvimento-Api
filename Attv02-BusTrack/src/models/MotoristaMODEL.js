@@ -9,8 +9,8 @@ const tableMotorista = `
     );
 `
 
-conn.query(tableMotorista,(err)=>{
-    if(err){
+conn.query(tableMotorista, (err) => {
+    if (err) {
         console.error("error ao criar a tabela motorista")
         return;
     }
