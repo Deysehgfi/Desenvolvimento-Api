@@ -37,7 +37,6 @@ export const registrarUsuario = (request, response) => {
         // console.log("senha recebida:"+senha)
         // console.log("senha criptografada:"+senhaHash)
 
-        response.status(200).json({ message: "yes" })
     })
 
 
