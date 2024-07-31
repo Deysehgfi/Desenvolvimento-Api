@@ -41,6 +41,8 @@
 
     next()
 
-}
+};
+
+
 
 export default validarUsuario;
