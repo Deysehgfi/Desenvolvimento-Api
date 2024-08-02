@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 //helpers import 
 import createUserToken from "../helpers/create-user-token.js";
 import getToken from "../helpers/get-token.js";
+import getUserByIdToken from "../helpers/get-user-by-token.js";
 
 
 
@@ -43,7 +44,7 @@ export const login = (request, response) => {
     const checkSql = `SELECT * FROM usuarios WHERE ?? = ?`;
     const checkData = ["email", email]
 
-    conn.query(checkSql, checkData, async (err, data) => {
+    conn.query(checkSql, checkData, (err, data) => {
         if (err) {
             console.error(err)
             response.status(500).json({ err: "Erro ao buscar usuario" })
@@ -56,7 +57,7 @@ export const login = (request, response) => {
 
         //verificar se a senha existe/ comparar senha 
         const usuario = data[0]
-        const compararSenha = await bcrypt.compare(senha, usuario.senha)
+        const compararSenha = bcrypt.compare(usuario.senha, senha)
         console.log("senha:", senha)
         console.log("senha do usuario:", usuario.senha)
         console.log("comparar senha:", compararSenha)
@@ -65,7 +66,7 @@ export const login = (request, response) => {
             return response.status(401).json({ err: "Senha Invalida" })
         }
         try {
-            await createUserToken(usuario, request, response)
+            createUserToken(usuario, request, response)
         } catch (err) {
             console.log(error)
             response.status(500).json({ err: "Erro ao processar informação" })
@@ -159,13 +160,13 @@ export const checkUser = (request, response) => {
 
         const usuarioId = decoded.id
 
-        const checkSql = `select * from usuarios where ?? = ?`
-        const checkData = ["id_usuarios", id]
+        const checkSql = `SELECT * FROM usuarios WHERE ?? = ?`
+        const checkData = ["id_usuarios", usuarioId]
 
-        conn.query(checkSql, checkData, (err, data)=>{
-            if(err){
+        conn.query(checkSql, checkData, (err, data) => {
+            if (err) {
                 console.error(err)
-                response.status(500).json({err: "Erro ao verificar usuario"})
+                response.status(500).json({ err: "Erro ao verificar usuario" })
                 return;
             }
             usuarioAtual = data[0]
@@ -176,3 +177,150 @@ export const checkUser = (request, response) => {
         response.status(200).json(usuarioAtual)
     }
 }
+
+
+export const getUserById = (request, response) => {
+    const { id } = request.params
+
+    const checkSql = `SELECT id_usuario, nome, email, telefone, image FROM usuarios WHERE ?? = ?`
+
+    const DataCheckSQL = ["id_usuario", id]
+
+    conn.query(checkSql, DataCheckSQL, (err, data) => {
+        if (err) {
+            console.error(err)
+            response.status(500).json({ err: "Erro ao buscar usuario" })
+            return;
+        }
+
+        if (data.length === 0) {
+            response.status(404).json({ err: "Usuario não existe" })
+            return;
+        }
+
+        const usuario = data[0]
+        response.status(200).json(usuario)
+        console.log(usuario)
+
+
+    })
+}
+
+
+export const editUser = async (request, response) => {
+    const { id } = request.params
+
+    //verificar se o usuario esta logado 
+    try {
+        const token = getToken(request)
+        //buscar dados no banco, nova consulta ao banco
+        const user = await getUserByIdToken(token)
+        console.log(user)
+
+        if(!nome){
+            return response.status(400).json({message: "O nome é obrigatório"})
+        }
+        if(!email){
+            return response.status(400).json({message: "O email é obrigatório"})
+        }
+        if(!telefone){
+            return response.status(400).json({message: "O telefone é obrigatório"})
+        }
+
+        const checkSql = `SELECT * FROM usuarios WHERE ?? = ?`
+        const checkSqlData = ["id_usuario", id]
+
+        conn.query(checkSql, checkSqlData, (err, data)=>{
+            if(err){
+                console.error(err)
+                response.status(500).json({err:" Erro ao buscar dados"})
+                return;
+            }
+
+            if(data.length === 0 ){
+                response.status(404).json({err:"Usuario não encontrado"})
+                return;
+            } 
+
+
+            const checkEmailSQL = `SELECT * FROM usuarios WHERE ?? = ? AND ?? != ?`
+            const checkEmailSQLData = ["email", email, "id_usuario",id]
+            conn.query(checkEmailSQL, checkEmailSQLData, (err,data)=>{
+                if(err){
+                    console.error(err)
+                    response.status(500).json({err:"Erro ao buscar email"})
+                    return;
+                }
+
+                if(data.length > 0){
+                    response.json(409).json({err: "E-mail já está em uso"})
+                    return;
+                }
+
+                const updateSql = `UPDATE usuarios SET ? WHERE ?? = ?`
+                const updateSqlData = [{nome, email, telefone},"id_usuario", id]
+
+                conn.query(updateSql, updateSqlData, (err, data)=>{
+                    if(err){
+                        console.error(err)
+                        response.status(500).json({err: "Erro ao atualizar usuário"})
+                    }
+
+                    response.status(200).json({message: "Usuário Atualizado"})
+                })
+            })
+        })
+    } catch (err) {
+        response.status(500).json({ err: error })
+    }
+}
+
+
+// export const login = (request, response) => {
+
+//     const { email, senha } = request.body
+
+//     if (!email) {
+//         response.status(400).json({ err: "o email é obrigatorio" })
+//         return;
+//     }
+
+//     if (!senha) {
+//         response.status(400).json({ err: "A senha é obrigatória " })
+//         return;
+//     }
+
+//     const checkSql = `SELECT * FROM usuarios WHERE ?? = ?`;
+//     const checkData = ["email", email]
+
+//                                     asnyc -> qnd coloca aqui fica dando erro, n sei pq
+//     conn.query(checkSql, checkData, async (err, data) => {
+//         if (err) {
+//             console.error(err)
+//             response.status(500).json({ err: "Erro ao buscar usuario" })
+//             return;
+//         }
+
+//         if (data.length === 0) {
+//             response.status(404).json({ err: "Usuario não encontrado" })
+//         }
+
+//         //verificar se a senha existe/ comparar senha
+//         const usuario = data[0]
+//         const compararSenha = await bcrypt.compare(usuario.senha, senha)
+//         console.log("senha:", senha)
+//         console.log("senha do usuario:", usuario.senha)
+//         console.log("comparar senha:", compararSenha)
+
+//         if (!compararSenha) {
+//             return response.status(401).json({ err: "Senha Invalida" })
+//         }
+//         try {
+//             await createUserToken(usuario, request, response)
+//         } catch (err) {
+//             console.log(error)
+//             response.status(500).json({ err: "Erro ao processar informação" })
+//         }
+//     })
+// }
+
