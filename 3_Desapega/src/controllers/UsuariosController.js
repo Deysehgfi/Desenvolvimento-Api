@@ -12,6 +12,7 @@ import getUserByIdToken from "../helpers/get-user-by-token.js";
 
 
 
+
 export const listarUsuarios = (request, response) => {
     const sql = `SELECT * FROM usuarios`
     conn.query(sql, (err, data) => {
@@ -217,6 +218,13 @@ export const editUser = async (request, response) => {
         const user = await getUserByIdToken(token)
         console.log(user)
 
+        //adicionar imagem ao obejto
+
+        let image = user.image
+        if(request.file){
+            imagem = request.file.filename
+        }
+        
         if(!nome){
             return response.status(400).json({message: "O nome é obrigatório"})
         }
@@ -274,53 +282,3 @@ export const editUser = async (request, response) => {
         response.status(500).json({ err: error })
     }
 }
-
-
-// export const login = (request, response) => {
-
-//     const { email, senha } = request.body
-
-//     if (!email) {
-//         response.status(400).json({ err: "o email é obrigatorio" })
-//         return;
-//     }
-
-//     if (!senha) {
-//         response.status(400).json({ err: "A senha é obrigatória " })
-//         return;
-//     }
-
-//     const checkSql = `SELECT * FROM usuarios WHERE ?? = ?`;
-//     const checkData = ["email", email]
-
-//                                     asnyc -> qnd coloca aqui fica dando erro, n sei pq
-//     conn.query(checkSql, checkData, async (err, data) => {
-//         if (err) {
-//             console.error(err)
-//             response.status(500).json({ err: "Erro ao buscar usuario" })
-//             return;
-//         }
-
-//         if (data.length === 0) {
-//             response.status(404).json({ err: "Usuario não encontrado" })
-//         }
-
-//         //verificar se a senha existe/ comparar senha
-//         const usuario = data[0]
-//         const compararSenha = await bcrypt.compare(usuario.senha, senha)
-//         console.log("senha:", senha)
-//         console.log("senha do usuario:", usuario.senha)
-//         console.log("comparar senha:", compararSenha)
-
-//         if (!compararSenha) {
-//             return response.status(401).json({ err: "Senha Invalida" })
-//         }
-//         try {
-//             await createUserToken(usuario, request, response)
-//         } catch (err) {
-//             console.log(error)
-//             response.status(500).json({ err: "Erro ao processar informação" })
-//         }
-//     })
-// }
-

@@ -15,6 +15,7 @@ const app = express();
 
 //importação dos modulos [TABELA]
 import "./models/UsuarioModel.js"
+import "./models/objetoModel.js"
 
 
 //importação da rotas
